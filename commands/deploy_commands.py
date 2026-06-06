@@ -3,6 +3,8 @@ from rich.console import Console
 
 from commands.git_commands import update_repo
 from commands.pipeline_commands import pipeline_status_for_component
+from commands.k8s_commands import k8s_status
+from commands.health_commands import health_status
 
 console = Console()
 
@@ -35,7 +37,11 @@ def deploy():
 
     console.print(f"\n[yellow]1.[/yellow] {component} için git işlemleri başlatılıyor...")
 
-    update_repo(selected_repo=component)
+    deploy_started = update_repo(selected_repo=component)
+
+    if not deploy_started:
+        console.print("[yellow]Deploy başlatılmadı. Pipeline beklenmeyecek.[/yellow]")
+        return
 
     console.print("\n[yellow]2.[/yellow] Pipeline başlatılması bekleniyor...")
     time.sleep(15)
@@ -49,19 +55,32 @@ def deploy():
         conclusion = result["conclusion"]
         url = result["url"]
 
-        console.print(f"[cyan]Kontrol {attempt + 1}/12[/cyan] -> status={status}, conclusion={conclusion}")
+        console.print(
+            f"[cyan]Kontrol {attempt + 1}/12[/cyan] -> status={status}, conclusion={conclusion}"
+        )
 
         if status == "completed":
+
             if conclusion == "success":
                 console.print("[green]Pipeline başarıyla tamamlandı.[/green]")
+
+                console.print("\n[yellow]4.[/yellow] Kubernetes durumu kontrol ediliyor...")
+                k8s_status()
+
+                console.print("\n[yellow]5.[/yellow] Health check yapılıyor...")
+                health_status()
+
             elif conclusion == "failure":
                 console.print("[red]Pipeline başarısız oldu.[/red]")
+
             else:
                 console.print(f"[yellow]Pipeline tamamlandı: {conclusion}[/yellow]")
 
-            console.print(f"Pipeline URL: {url}")
+            console.print(f"\nPipeline URL: {url}")
             return
 
         time.sleep(10)
 
-    console.print("[yellow]Pipeline hâlâ devam ediyor olabilir. Daha sonra 'pipeline' komutuyla tekrar kontrol et.[/yellow]")
+    console.print(
+        "[yellow]Pipeline hâlâ devam ediyor olabilir. Daha sonra 'pipeline' komutuyla tekrar kontrol et.[/yellow]"
+    )
