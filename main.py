@@ -1,6 +1,8 @@
 from rich.console import Console
 from rich.panel import Panel
 
+from commands.deploy_commands import deploy
+from commands.pipeline_commands import pipeline_status
 from commands.health_commands import health_status
 from commands.git_commands import show_git_status, update_repo
 from commands.project_commands import project_check
@@ -24,7 +26,9 @@ def help_menu():
 [bold green]Komutlar[/bold green]
 
 status      Git + proje + Kubernetes durumunu gösterir
+deploy      Git push sonrası pipeline durumunu gösterir
 health      Frontend, backend, Grafana ve Prometheus erişimini kontrol eder
+pipeline    GitHub Actions son çalışma durumunu gösterir
 git         Sadece repository durumlarını gösterir
 proje       Proje dosya kontrollerini gösterir
 k8s         Kubernetes pod durumlarını gösterir
@@ -45,8 +49,12 @@ def main():
             show_git_status()
             project_check()
             k8s_status()
+        elif command == "deploy":
+            deploy()
         elif command == "health":
             health_status()
+        elif command == "pipeline":
+            pipeline_status()
         elif command == "git":
             show_git_status()
         elif command == "proje":

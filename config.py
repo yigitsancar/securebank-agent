@@ -12,3 +12,11 @@ EC2_HOST = "51.21.210.17"
 EC2_USER = "ubuntu"
 SSH_KEY = os.path.expanduser("~/.ssh/securebank-key.pem")
 K8S_NAMESPACE = "securebank"
+
+GITHUB_OWNER = "yigitsancar"
+
+GITHUB_REPOS = {
+    "backend": "securebank-devops-platform",
+    "frontend": "securebank-frontend",
+    "agent": "securebank-agent",
+}
