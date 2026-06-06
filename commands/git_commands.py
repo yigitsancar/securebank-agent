@@ -30,25 +30,28 @@ def show_git_status():
     console.print(table)
 
 
-def update_repo():
-    console.print("[bold]Hangi repository güncellensin?[/bold]")
-    console.print("1 - backend")
-    console.print("2 - frontend")
-    console.print("3 - k8s")
+def update_repo(selected_repo=None):
+    if selected_repo:
+        repo_name = selected_repo
+    else:
+        console.print("[bold]Hangi repository güncellensin?[/bold]")
+        console.print("1 - backend")
+        console.print("2 - frontend")
+        console.print("3 - k8s")
 
-    choice = input("Seçim: ").strip()
+        choice = input("Seçim: ").strip()
 
-    mapping = {
-        "1": "backend",
-        "2": "frontend",
-        "3": "k8s",
-    }
+        mapping = {
+            "1": "backend",
+            "2": "frontend",
+            "3": "k8s",
+        }
 
-    repo_name = mapping.get(choice)
+        repo_name = mapping.get(choice)
 
     if not repo_name:
         console.print("[red]Geçersiz seçim.[/red]")
-        return
+        return False
 
     path = REPOS[repo_name]
 
@@ -56,11 +59,11 @@ def update_repo():
 
     if code != 0:
         console.print(f"[red]Git status hatası:[/red] {err}")
-        return
+        return False
 
     if not changes:
         console.print("[green]Değişiklik yok. Commit atılmadı.[/green]")
-        return
+        return False
 
     console.print(f"\n[bold yellow]{repo_name} içinde değişiklikler:[/bold yellow]")
     console.print(changes)
@@ -69,7 +72,7 @@ def update_repo():
 
     if not commit_message:
         console.print("[red]Commit mesajı boş olamaz.[/red]")
-        return
+        return False
 
     console.print("\n[cyan]Git add çalışıyor...[/cyan]")
     run_command("git add .", cwd=path)
@@ -79,7 +82,7 @@ def update_repo():
 
     if code != 0:
         console.print(f"[red]Commit başarısız:[/red]\n{err}")
-        return
+        return False
 
     console.print(out)
 
@@ -88,6 +91,7 @@ def update_repo():
 
     if code != 0:
         console.print(f"[red]Push başarısız:[/red]\n{err}")
-        return
+        return False
 
     console.print("[green]Başarıyla GitHub'a gönderildi.[/green]")
+    return True

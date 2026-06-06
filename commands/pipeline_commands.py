@@ -91,4 +91,18 @@ def pipeline_status():
             conclusion_text
         )
 
+def pipeline_status_for_component(component):
+    repo_name = GITHUB_REPOS.get(component)
+
+    if not repo_name:
+        return {
+            "status": "ERROR",
+            "conclusion": f"Unknown component: {component}",
+            "name": "-",
+            "branch": "-",
+            "url": "-"
+        }
+
+    return fetch_latest_run(repo_name)
+
     console.print(table)
