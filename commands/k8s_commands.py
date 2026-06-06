@@ -9,9 +9,9 @@ console = Console()
 
 def k8s_status():
     command = (
-    f'ssh -i {SSH_KEY} {EC2_USER}@{EC2_HOST} '
-    f'"KUBECONFIG=/home/ubuntu/.kube/config kubectl get pods -n {K8S_NAMESPACE} --no-headers"'
-)
+        f'ssh -i {SSH_KEY} {EC2_USER}@{EC2_HOST} '
+        f'"KUBECONFIG=/home/ubuntu/.kube/config kubectl get pods -n {K8S_NAMESPACE} --no-headers"'
+    )
 
     code, out, err = run_command(command)
 
@@ -29,7 +29,20 @@ def k8s_status():
 
     for line in out.splitlines():
         parts = line.split()
+
         if len(parts) >= 5:
-            table.add_row(parts[0], parts[1], parts[2], parts[3], parts[4])
+            pod_name = parts[0]
+            ready = parts[1]
+            status = parts[2]
+            age = parts[-1]
+            restarts = " ".join(parts[3:-1])
+
+            table.add_row(
+                pod_name,
+                ready,
+                status,
+                restarts,
+                age
+            )
 
     console.print(table)
