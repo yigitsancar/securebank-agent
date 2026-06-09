@@ -1,6 +1,7 @@
 from rich.console import Console
 from rich.panel import Panel
 
+from commands.db_commands import db_status
 from commands.ops_commands import pods_status, svc_status, pvc_status, monitoring_status, restart_component
 from commands.deploy_commands import deploy
 from commands.pipeline_commands import pipeline_status
@@ -32,6 +33,7 @@ health      Frontend, backend, Grafana ve Prometheus erişimini kontrol eder
 pipeline    GitHub Actions son çalışma durumunu gösterir
 git         Sadece repository durumlarını gösterir
 proje       Proje dosya kontrollerini gösterir
+db          PostgreSQL kullanıcı ve işlem istatistiklerini gösterir
 pods        Kubernetes pod durumlarını gösterir
 svc         Kubernetes service durumlarını gösterir
 pvc         PostgreSQL kalıcı disk durumunu gösterir
@@ -65,6 +67,8 @@ def main():
             show_git_status()
         elif command == "proje":
             project_check()
+        elif command == "db":
+            db_status()
         elif command == "k8s":
             k8s_status()
         elif command == "pods":
