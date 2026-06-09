@@ -1,6 +1,7 @@
 from rich.console import Console
 from rich.panel import Panel
 
+from commands.ops_commands import pods_status, svc_status, pvc_status, monitoring_status, restart_component
 from commands.deploy_commands import deploy
 from commands.pipeline_commands import pipeline_status
 from commands.health_commands import health_status
@@ -31,6 +32,11 @@ health      Frontend, backend, Grafana ve Prometheus erişimini kontrol eder
 pipeline    GitHub Actions son çalışma durumunu gösterir
 git         Sadece repository durumlarını gösterir
 proje       Proje dosya kontrollerini gösterir
+pods        Kubernetes pod durumlarını gösterir
+svc         Kubernetes service durumlarını gösterir
+pvc         PostgreSQL kalıcı disk durumunu gösterir
+monitoring  Prometheus, Grafana ve target durumunu gösterir
+restart     Seçilen Kubernetes deployment'ını restart eder
 k8s         Kubernetes pod durumlarını gösterir
 guncelle    Seçilen repository için git add/commit/push yapar
 yardim      Komutları gösterir
@@ -61,6 +67,20 @@ def main():
             project_check()
         elif command == "k8s":
             k8s_status()
+        elif command == "pods":
+            pods_status()
+        elif command == "svc":
+            svc_status()
+        elif command == "pvc":
+            pvc_status()
+        elif command == "monitoring":
+            monitoring_status()
+        elif command.startswith("restart"):
+            parts = command.split()
+            if len(parts) != 2:
+                console.print("[yellow]Kullanım: restart backend | restart frontend | restart postgres[/yellow]")
+            else:
+                restart_component(parts[1])
         elif command == "guncelle":
             update_repo()
         elif command == "yardim":
